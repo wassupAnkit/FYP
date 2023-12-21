@@ -136,13 +136,13 @@ docker build --build-arg TMDB_V3_API_KEY=<your-api-key> -t netflix .
     
     - Access Jenkins in a web browser using the public IP of your EC2 instance.
         
-        publicIp:8080
+        publicIp:8008
         
 2. **Install Necessary Plugins in Jenkins:**
 
 Goto Manage Jenkins →Plugins → Available Plugins →
 
-Install below plugins
+The plugins below were installed.
 
 1 Eclipse Temurin Installer (Install without restart)
 
@@ -207,6 +207,7 @@ pipeline {
                 }
             }
         }
+#The abortPipeline in the quality gate stage is set to false so that no matter the conditioin in the quality gate the build will take place regardless.
         stage("quality gate") {
             steps {
                 script {
@@ -320,36 +321,36 @@ pipeline{
                 sh "trivy fs . > trivyfs.txt"
             }
         }
+
+#The stage for the Docker Build and Push was the most irritating stage faced by myself as the build failed consistently in this stage. This could be because of various reasons.
+# My docker login was consistently failing as the docker insisde the jenkins was not identifying my docker credentials.  giving the error (Docker login failed.)
+# While searching on how to trouble shoot it I found many answers but none of them worked. But the one I found worked for the most was to restart the jenkins in the  ubuntu server.
+# My docker credential was not being recognized by the docer inside the jenkins but was recognized by the docker inside the ubuntu server.
+# After removing and installing the docker inside the ubuntu server for 3rd time the credentials finally matched and the build ran successfully.
         stage("Docker Build & Push"){
             steps{
                 script{
-                   withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
-                       sh "docker build --build-arg TMDB_V3_API_KEY=<yourapikey> -t netflix ."
-                       sh "docker tag netflix nasi101/netflix:latest "
-                       sh "docker push nasi101/netflix:latest "
+                   withDockerRegistry(credentialsId: 'docker', toolName: 'docker-tool'){   
+                       sh "docker build --build-arg TMDB_V3_API_KEY=<yourapikey> -t netflixclone ."
+                       sh "docker tag netflixclone dockankit/netflix:latest "
+                       sh "docker push dockankit/netflix:latest "
                     }
                 }
             }
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image nasi101/netflix:latest > trivyimage.txt" 
+                sh "trivy image dockankit/netflix:latest > trivyimage.txt" 
             }
         }
         stage('Deploy to container'){
             steps{
-                sh 'docker run -d --name netflix -p 8081:80 nasi101/netflix:latest'
+                sh 'docker run -d -p 8008:80 dockAnkit/netflix:latest'
             }
         }
     }
 }
 
-
-If you get docker login failed errorr
-
-sudo su
-sudo usermod -aG docker jenkins
-sudo systemctl restart jenkins
 
 
 ```
