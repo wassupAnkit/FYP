@@ -49,12 +49,9 @@
 - Build and run your application using Docker containers:
     
     ```bash
-    docker build -t netflix .
-    docker run -d --name netflix -p 8081:80 netflix:latest
+    docker build -t netflixclone .
+    docker run -d --name netflixclone -p 8008:80 netflix:latest
     
-    #to delete
-    docker stop <containerid>
-    docker rmi -f netflix
     ```
 
 It will show an error cause you need API key
@@ -71,7 +68,7 @@ It will show an error cause you need API key
 
 Now recreate the Docker image with your api key:
 ```
-docker build --build-arg TMDB_V3_API_KEY=<your-api-key> -t netflix .
+docker build --build-arg TMDB_V3_API_KEY=<your-api-key> -t netflixclone .
 ```
 
 **Phase 2: Security**
@@ -81,7 +78,7 @@ docker build --build-arg TMDB_V3_API_KEY=<your-api-key> -t netflix .
         
         sonarqube
         ```
-        docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+        docker run -d --name sonarQ -p 9000:9000 sonarqube:lts-community
         ```
         
         
@@ -196,7 +193,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/N4si/DevSecOps-Project.git'
+                git branch: 'main', url: 'https://github.com/wassupAnkit/FYP.git'
             }
         }
         stage("Sonarqube Analysis") {
