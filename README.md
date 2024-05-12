@@ -1,4 +1,3 @@
-<p>I will be keeping the project flow here shortly!!!!!!!!</p>
 <br />
 654654654654
 # Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
